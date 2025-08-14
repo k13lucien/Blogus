@@ -26,11 +26,14 @@ class ArticleController extends Controller
     {
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'content' => ['required', 'string', 'max:1000'],
-            'user_id' => ['required', 'integer', 'exists:users,id']
+            'content' => ['required', 'string', 'max:1000']
         ]);
 
-        $article = Article::create($data);
+        $article = Article::create([
+            'title' => $data['title'],
+            'content' => $data['content'],
+            'user_id' => $request->user()->id
+        ]);
 
         return response()->json([
             'message' => 'Article créé',
@@ -66,8 +69,13 @@ class ArticleController extends Controller
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string', 'max:1000'],
-            'user_id' => ['required', 'integer', 'exists:users,id']
         ]);
+
+        if ($request->user()->id !== $article->user_id) {
+            return response()->json([
+                'message' => 'Vous n\'êtes pas autorisé à modifier cet article',
+            ], 403);
+        }
 
         $article->update($data);
 
@@ -81,10 +89,17 @@ class ArticleController extends Controller
      * DELETE /api/article
      * Remove the specified article from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         $article = Article::findOrFail($id);
         $articleName = $article->title;
+
+        if ($request->user()->id !== $article->user_id)
+        {
+            return response()->json([
+                'message' => 'Vous n\'êtes pas autorisé à supprimer cet article',
+            ], 403);
+        }
 
         $article->delete();
 

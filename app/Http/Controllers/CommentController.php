@@ -27,10 +27,13 @@ class CommentController extends Controller
         $data = $request->validate([
             'content' => ['required', 'string', 'max:255'],
             'article_id' => ['required', 'integer', 'exists:articles,id'],
-            'user_id' => ['required', 'integer', 'exists:users,id'],
         ]);
 
-        $comment = Comment::create($data);
+        $comment = Comment::create([
+            'content' => $data['content'],
+            'article_id' => $data['article_id'],
+            'user_id' => $request->user()->id,
+        ]);
 
         return response()->json([
             'message' => 'Commentaire créé',
@@ -68,8 +71,13 @@ class CommentController extends Controller
         $data = $request->validate([
             'content' => ['required', 'string', 'max:255'],
             'article_id' => ['required', 'integer', 'exists:articles,id'],
-            'user_id' => ['required', 'integer', 'exists:users,id'],
         ]);
+
+        if ($request->user()->id !== $comment->user_id) {
+            return response()->json([
+                'message' => 'Vous n\'êtes pas autorisé à modifier ce commentaire',
+            ], 403);
+        }
 
         $comment->update($data);
 
@@ -83,9 +91,15 @@ class CommentController extends Controller
      * DELETE /api/comment
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         $comment = Comment::findOrFail($id);
+
+        if ($request->user()->id !== $comment->user_id) {
+            return response()->json([
+                'message' => 'Vous n\'êtes pas autorisé à supprimer ce commentaire',
+            ], 403);
+        }
 
         $comment->delete();
 
