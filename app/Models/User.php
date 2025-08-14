@@ -46,4 +46,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Un utilisateur peut avoir plusieurs articles
+     */
+    public function articles()
+    {
+        return $this->hasMany(Article::class);
+    }
 }
