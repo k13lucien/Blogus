@@ -13,7 +13,7 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $article = Article::latest()->get();
+        $article = Article::with('user')->latest()->get();
 
         return response()->json($article);
     }
@@ -44,7 +44,7 @@ class ArticleController extends Controller
      */
     public function show(string $id)
     {
-        $article = Article::findOrFail($id);
+        $article = Article::with('user')->findOrFail($id);
 
         if (!$article) {
             return response()->json([
@@ -78,6 +78,7 @@ class ArticleController extends Controller
     }
 
     /**
+     * DELETE /api/article
      * Remove the specified article from storage.
      */
     public function destroy(string $id)
