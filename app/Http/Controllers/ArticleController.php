@@ -72,7 +72,7 @@ class ArticleController extends Controller
         $article->update($data);
 
         return response()->json([
-            'message' => 'Article mise à jour',
+            'message' => 'Article mis à jour',
             'article' => $article
         ], 201);
     }
