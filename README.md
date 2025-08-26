@@ -1,4 +1,4 @@
-Blogus - Laravel Docker Setup
+### Blogus - Laravel Docker Setup
 
 Ce projet utilise Docker pour simplifier le développement Laravel avec MySQL, sans avoir à installer PHP, Composer ou MySQL localement.
 
