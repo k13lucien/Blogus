@@ -47,7 +47,7 @@ class ArticleController extends Controller
      */
     public function show(string $id)
     {
-        $article = Article::with('user')->findOrFail($id);
+        $article = Article::with('user', 'comments')->findOrFail($id);
 
         if (!$article) {
             return response()->json([
@@ -59,7 +59,7 @@ class ArticleController extends Controller
     }
 
     /**
-     * PUT /api/article
+     * PUT /api/article/{id}
      * Update the specified article in storage.
      */
     public function update(Request $request, string $id)
@@ -86,7 +86,7 @@ class ArticleController extends Controller
     }
 
     /**
-     * DELETE /api/article
+     * DELETE /api/article/{id}
      * Remove the specified article from storage.
      */
     public function destroy(Request $request, string $id)
